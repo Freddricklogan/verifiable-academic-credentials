@@ -1,483 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>VeriCred — Verifiable Academic Credentials</title>
-<meta name="description" content="An open-standards digital academic credentialing platform: issue, hold, and verify W3C Verifiable Credentials and Open Badges 3.0 with real cryptographic signatures, DID identities, status-list revocation, and blockchain anchoring for tamper-evidence.">
-<meta name="author" content="Freddrick Logan">
-<meta name="theme-color" content="#0b1f3a">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b1f3a'/%3E%3Cpath d='M16 4l10 4v6c0 6-4.5 10-10 12C10.5 24 6 20 6 14V8z' fill='none' stroke='%23c9a227' stroke-width='2'/%3E%3Cpath d='M11 15l3.5 3.5L21 12' fill='none' stroke='%23c9a227' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<style>
-  :root{
-    --navy:#0b1f3a; --navy2:#122c52; --gold:#c9a227; --gold-soft:#e6c968;
-    --ink:#e8eef7; --muted:#9db0cc; --line:rgba(201,162,39,.25);
-    --ok:#2ecc71; --bad:#ff6b6b; --panel:rgba(18,44,82,.7);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:
-     radial-gradient(1200px 600px at 80% -10%,rgba(201,162,39,.08),transparent),
-     linear-gradient(160deg,#081428,#0b1f3a 40%,#0e2647);color:var(--ink);min-height:100vh;line-height:1.55}
-  a{color:var(--gold-soft)}
-  .wrap{max-width:1280px;margin:0 auto;padding:28px 20px 60px}
-  header.site{text-align:center;padding:22px 0 10px}
-  .brand{display:inline-flex;align-items:center;gap:12px}
-  .brand svg{width:44px;height:44px}
-  h1{font-size:2.15em;letter-spacing:.5px}
-  h1 .v{color:var(--gold)}
-  .tagline{color:var(--muted);margin-top:6px;font-size:1.02em}
-  .standards{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 6px}
-  .chip{font-size:.78em;border:1px solid var(--line);color:var(--gold-soft);
-     background:rgba(201,162,39,.06);padding:5px 11px;border-radius:20px}
-  .dcc{max-width:820px;margin:14px auto 0;color:var(--muted);font-size:.92em;
-     border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:rgba(201,162,39,.04)}
-  .tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:26px 0 20px}
-  .tab{padding:11px 18px;border:1px solid var(--line);background:var(--panel);color:var(--ink);
-     border-radius:10px;cursor:pointer;font-weight:600;font-size:.92em;transition:.2s}
-  .tab:hover{border-color:var(--gold)}
-  .tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold);box-shadow:0 0 18px rgba(201,162,39,.35)}
-  .view{display:none;animation:fade .3s}
-  .view.active{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .grid{display:grid;gap:20px}
-  .cols-2{grid-template-columns:1fr 1fr}
-  .cols-3{grid-template-columns:repeat(3,1fr)}
-  @media(max-width:900px){.cols-2,.cols-3{grid-template-columns:1fr}}
-  .panel{background:var(--panel);border:1px solid rgba(201,162,39,.18);border-radius:14px;padding:20px;backdrop-filter:blur(8px)}
-  .panel h2{color:var(--gold);font-size:1.18em;margin-bottom:6px}
-  .panel .sub{color:var(--muted);font-size:.88em;margin-bottom:16px}
-  label{display:block;font-size:.82em;color:var(--muted);margin:12px 0 5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-  input,select,textarea{width:100%;padding:10px 12px;background:rgba(8,20,40,.6);border:1px solid rgba(201,162,39,.25);
-     color:var(--ink);border-radius:8px;font-size:.92em;font-family:inherit}
-  textarea{min-height:120px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82em}
-  button.act{margin-top:16px;width:100%;padding:12px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;
-     font-weight:700;cursor:pointer;font-size:.95em;transition:.2s}
-  button.act:hover{background:var(--gold-soft);box-shadow:0 0 18px rgba(201,162,39,.4)}
-  button.ghost{background:transparent;color:var(--gold-soft);border:1px solid var(--line)}
-  button.ghost:hover{background:rgba(201,162,39,.1)}
-  .did{font-family:ui-monospace,monospace;font-size:.78em;color:var(--gold-soft);word-break:break-all;
-     background:rgba(8,20,40,.5);border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin-top:6px}
-  .cred-card{border:1px solid rgba(201,162,39,.3);border-radius:12px;padding:16px;margin-bottom:14px;
-     background:linear-gradient(135deg,rgba(18,44,82,.9),rgba(11,31,58,.9));position:relative;overflow:hidden}
-  .cred-card::before{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;
-     background:radial-gradient(circle,rgba(201,162,39,.18),transparent 70%)}
-  .cred-card h3{color:var(--gold-soft);font-size:1.05em}
-  .cred-card .meta{color:var(--muted);font-size:.84em;margin-top:4px}
-  .badge{display:inline-block;font-size:.72em;padding:3px 9px;border-radius:20px;margin:6px 6px 0 0;
-     border:1px solid var(--line);color:var(--gold-soft);background:rgba(201,162,39,.06)}
-  .status{display:inline-flex;align-items:center;gap:6px;font-size:.8em;font-weight:700;padding:3px 10px;border-radius:20px}
-  .status.valid{color:var(--ok);background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.4)}
-  .status.revoked{color:var(--bad);background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.4)}
-  .card-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-  .card-actions button{flex:1;min-width:110px;padding:8px;font-size:.82em;border-radius:7px;cursor:pointer;
-     background:transparent;color:var(--ink);border:1px solid var(--line)}
-  .card-actions button:hover{border-color:var(--gold)}
-  .result{margin-top:16px;border-radius:10px;padding:16px;font-size:.9em;display:none}
-  .result.show{display:block}
-  .result.pass{background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.4)}
-  .result.fail{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.4)}
-  .check{display:flex;align-items:flex-start;gap:10px;margin:8px 0}
-  .check .icon{font-weight:800}
-  .check.ok .icon{color:var(--ok)}.check.no .icon{color:var(--bad)}
-  .ledger-block{display:flex;gap:14px;align-items:stretch;margin-bottom:10px}
-  .ledger-block .box{flex:1;border:1px solid var(--line);border-radius:10px;padding:12px;background:rgba(8,20,40,.5);font-size:.8em}
-  .ledger-block .box b{color:var(--gold-soft)}
-  .hashline{font-family:ui-monospace,monospace;font-size:.74em;color:var(--muted);word-break:break-all}
-  .link{color:var(--gold-soft);font-size:.9em;text-align:center;margin:2px 0}
-  .kpis{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
-  .kpi{border:1px solid var(--line);border-radius:10px;padding:12px 18px;text-align:center;background:rgba(8,20,40,.4)}
-  .kpi .n{font-size:1.6em;color:var(--gold);font-weight:800}
-  .kpi .l{font-size:.75em;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-  pre.json{background:rgba(8,20,40,.7);border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;
-     font-size:.76em;max-height:340px;color:#cfe3ff}
-  footer.site{text-align:center;margin-top:44px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:.88em}
-  .flash{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);
-     padding:12px 22px;border-radius:10px;font-weight:700;box-shadow:0 8px 30px rgba(0,0,0,.4);opacity:0;transition:.3s;pointer-events:none}
-  .flash.show{opacity:1}
-</style>
-<link rel="canonical" href="https://freddricklogan.github.io/verifiable-academic-credentials/">
+<meta name="description" content="A browser-based reference implementation of W3C Verifiable Credentials 2.0 and Open Badges 3.0: real ECDSA P-256 signatures, self-resolving did:key identifiers, bitstring status-list revocation and a hash-linked anchor ledger. Keys never leave the browser.">
 <meta name="robots" content="index, follow">
-<meta name="author" content="Freddrick Logan">
+<link rel="canonical" href="https://freddricklogan.github.io/verifiable-academic-credentials/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b1220'/%3E%3Cpath d='M16 4l10 4v6c0 6-4.5 10-10 12C10.5 24 6 20 6 14V8z' fill='none' stroke='%2358a6ff' stroke-width='2'/%3E%3Cpath d='M11 15l3.5 3.5L21 12' fill='none' stroke='%233fb950' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Freddrick Logan">
 <meta property="og:title" content="VeriCred — Verifiable Academic Credentials">
-<meta property="og:description" content="An open-standards digital academic credentialing platform: issue, hold, and verify W3C Verifiable Credentials and Open Badges 3.0 with real cryptographic signatures, DID identities, status-list revocation, and blockchain anchoring for tamper-evidence.">
+<meta property="og:description" content="Issue, hold and verify W3C Verifiable Credentials with real ECDSA P-256 signatures and self-resolving did:key identifiers — entirely in the browser.">
 <meta property="og:url" content="https://freddricklogan.github.io/verifiable-academic-credentials/">
-<meta property="og:image" content="https://images.unsplash.com/photo-1593349480506-8433634cdcbe?auto=format&fit=crop&w=1200&h=630&q=80">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="VeriCred — Verifiable Academic Credentials">
-<meta name="twitter:description" content="An open-standards digital academic credentialing platform: issue, hold, and verify W3C Verifiable Credentials and Open Badges 3.0 with real cryptographic signatures, DID identities, status-list revocation, and blockchain anchoring for tamper-evidence.">
-<meta name="twitter:image" content="https://images.unsplash.com/photo-1593349480506-8433634cdcbe?auto=format&fit=crop&w=1200&h=630&q=80">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"VeriCred \u2014 Verifiable Academic Credentials","description":"An open-standards digital academic credentialing platform: issue, hold, and verify W3C Verifiable Credentials and Open Badges 3.0 with real cryptographic signatures, DID identities, status-list revocation, and blockchain anchoring for tamper-evidence.","url":"https://freddricklogan.github.io/verifiable-academic-credentials/","image":"https://images.unsplash.com/photo-1593349480506-8433634cdcbe?auto=format&fit=crop&w=1200&h=630&q=80","applicationCategory":"WebApplication","operatingSystem":"Any (Web)","author":{"@type":"Person","name":"Freddrick Logan","url":"https://fredlogan.phd"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<meta name="twitter:description" content="Issue, hold and verify W3C Verifiable Credentials with real ECDSA P-256 signatures and self-resolving did:key identifiers — entirely in the browser.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap">
+<link rel="stylesheet" href="src/exec-shell.css">
+<link rel="stylesheet" href="src/app.css">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"VeriCred — Verifiable Academic Credentials","description":"A browser-based reference implementation of W3C Verifiable Credentials 2.0 and Open Badges 3.0 with real ECDSA P-256 signatures, did:key identifiers, bitstring status-list revocation and a hash-linked anchor ledger.","url":"https://freddricklogan.github.io/verifiable-academic-credentials/","applicationCategory":"EducationalApplication","operatingSystem":"Any (Web)","author":{"@type":"Person","name":"Freddrick Logan","url":"https://fredlogan.phd"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
 </head>
 <body>
-<div class="wrap">
-  <header class="site">
-    <div class="brand">
-      <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#122c52"/><path d="M16 4l10 4v6c0 6-4.5 10-10 12C10.5 24 6 20 6 14V8z" fill="none" stroke="#c9a227" stroke-width="2"/><path d="M11 15l3.5 3.5L21 12" fill="none" stroke="#c9a227" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <h1><span class="v">Veri</span>Cred</h1>
-    </div>
-    <p class="tagline">Learner-owned academic credentials, built on open standards — issue, hold, verify.</p>
-    <div class="standards">
-      <span class="chip">W3C Verifiable Credentials 2.0</span>
-      <span class="chip">Open Badges 3.0</span>
-      <span class="chip">Decentralized Identifiers (DID)</span>
-      <span class="chip">ECDSA P-256 · Web Crypto</span>
-      <span class="chip">Status-List Revocation</span>
-      <span class="chip">Blockchain Anchoring</span>
-    </div>
-    <p class="dcc">A working prototype aligned with the open-standards approach championed by the
-      <strong>Digital Credentials Consortium</strong> (MIT-led): credentials are <em>learner-owned</em>,
-      cryptographically verifiable, privacy-respecting, and interoperable — not locked to any single vendor.
-      Every signature and hash on this page is computed live in your browser with the Web Crypto API.</p>
-  </header>
 
-  <nav class="tabs">
-    <button class="tab active" data-view="issue">① Issuer</button>
-    <button class="tab" data-view="wallet">② Learner Wallet</button>
-    <button class="tab" data-view="verify">③ Verifier</button>
-    <button class="tab" data-view="ledger">④ Anchor Ledger</button>
-  </nav>
+<main id="demo-root" class="exec-main">
+
+  <p class="notice">
+    <strong>Reference implementation.</strong> The cryptography is real and runs entirely in
+    this browser: keys are generated with the Web Crypto API, credentials are signed with
+    ECDSA P-256 over a canonicalized document, and the issuer's <code>did:key</code> identifier
+    is decoded back to its public key by the verifier with no registry and no network call.
+    The institutions, learners and achievements are illustrative sample data, and nothing is
+    transmitted anywhere — the page cannot make a network request at all.
+  </p>
+
+  <ul class="standards">
+    <li>W3C Verifiable Credentials 2.0</li>
+    <li>Open Badges 3.0</li>
+    <li>did:key (P-256, multicodec + base58btc)</li>
+    <li>ECDSA P-256 · Web Crypto</li>
+    <li>Bitstring status list revocation</li>
+    <li>Hash-linked anchor ledger</li>
+  </ul>
+
+  <div class="tabs" role="tablist" id="tablist" aria-label="Credential lifecycle">
+    <button type="button" class="tab" role="tab" id="tab-issue" data-view="issue"
+            aria-controls="panel-issue" aria-selected="true">1 · Issuer</button>
+    <button type="button" class="tab" role="tab" id="tab-wallet" data-view="wallet"
+            aria-controls="panel-wallet" aria-selected="false" tabindex="-1">2 · Learner wallet</button>
+    <button type="button" class="tab" role="tab" id="tab-verify" data-view="verify"
+            aria-controls="panel-verify" aria-selected="false" tabindex="-1">3 · Verifier</button>
+    <button type="button" class="tab" role="tab" id="tab-ledger" data-view="ledger"
+            aria-controls="panel-ledger" aria-selected="false" tabindex="-1">4 · Anchor ledger</button>
+  </div>
 
   <!-- ISSUER -->
-  <section class="view active" id="view-issue">
-    <div class="grid cols-2">
+  <section class="tabpanel" role="tabpanel" id="panel-issue" data-view="issue" aria-labelledby="tab-issue" tabindex="0">
+    <div class="grid grid--2">
       <div class="panel">
-        <h2>Issue a Verifiable Credential</h2>
-        <p class="sub">Acting as a credentialing institution. The credential is assembled as an
-          Open Badges 3.0 achievement inside a W3C Verifiable Credential, then signed with the issuer's private key.</p>
-        <label>Issuing institution</label>
-        <input id="i-issuer" value="Meridian Institute of Technology">
-        <label>Learner name</label>
-        <input id="i-learner" value="Jordan Ellis">
-        <label>Credential / achievement</label>
-        <input id="i-title" value="M.S. in Applied Data Science">
-        <label>Type</label>
-        <select id="i-type">
-          <option>Degree</option><option>Micro-credential</option><option>Professional Certificate</option><option>Course Badge</option>
-        </select>
-        <label>Competencies (comma-separated)</label>
-        <input id="i-skills" value="Machine Learning, Statistical Inference, Data Engineering, MLOps">
-        <button class="act" id="btn-issue">Sign &amp; Issue Credential</button>
+        <h2 class="panel__title">Issue a verifiable credential</h2>
+        <p class="panel__sub">
+          Acting as a credentialing institution. The achievement is assembled as an Open Badges 3.0
+          <code>AchievementCredential</code> inside a W3C Verifiable Credential, canonicalized, then
+          signed with the issuer's private key.
+        </p>
+
+        <div class="field">
+          <label for="f-issuer">Issuing institution</label>
+          <input type="text" id="f-issuer" value="Meridian Institute of Technology" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="f-learner">Learner name</label>
+          <input type="text" id="f-learner" value="Jordan Ellis" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="f-title">Credential / achievement</label>
+          <input type="text" id="f-title" value="M.S. in Applied Data Science" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="f-type">Achievement type</label>
+          <select id="f-type">
+            <option>Degree</option>
+            <option>Micro-credential</option>
+            <option>Professional Certificate</option>
+            <option>Course Badge</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-skills">Competencies (comma-separated)</label>
+          <input type="text" id="f-skills" value="Machine Learning, Statistical Inference, Data Engineering, MLOps" autocomplete="off">
+        </div>
+
+        <div class="actions">
+          <button type="button" class="exec-btn exec-btn--primary" id="btn-issue">Sign &amp; issue credential</button>
+        </div>
       </div>
+
       <div class="panel">
-        <h2>Issuer Identity</h2>
-        <p class="sub">A decentralized identifier (DID) derived from the issuer's public key. Verifiers resolve
-          this DID to the key that checks the signature — no central authority required.</p>
-        <label>Issuer DID (did:key)</label>
-        <div class="did" id="issuer-did">generating…</div>
-        <label>Public key (JWK · P-256)</label>
-        <pre class="json" id="issuer-jwk">…</pre>
-        <div class="kpis">
-          <div class="kpi"><div class="n" id="k-issued">0</div><div class="l">Issued</div></div>
-          <div class="kpi"><div class="n" id="k-anchored">0</div><div class="l">Anchored</div></div>
+        <h2 class="panel__title">Issuer identity</h2>
+        <p class="panel__sub">
+          A decentralized identifier derived from the issuer's public key. The key material is
+          inside the identifier, so a verifier resolves it offline.
+        </p>
+        <div id="issuer-identity" aria-live="polite">
+          <p class="empty">Generating a P-256 key pair…</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- WALLET -->
-  <section class="view" id="view-wallet">
+  <section class="tabpanel" role="tabpanel" id="panel-wallet" data-view="wallet" aria-labelledby="tab-wallet" tabindex="0" hidden>
     <div class="panel">
-      <h2>Learner Credential Wallet</h2>
-      <p class="sub">The learner holds and controls their own credentials. From here they can inspect the raw
-        signed credential, present it to a verifier, or copy it to share.</p>
-      <div id="wallet-list"><p style="color:var(--muted)">No credentials yet — issue one from the Issuer tab.</p></div>
+      <h2 class="panel__title">Learner credential wallet</h2>
+      <p class="panel__sub">
+        The learner holds and controls their own credentials. Each has its own holder
+        <code>did:key</code>. From here they can inspect the signed document, present it to a
+        verifier, or copy it. The issuer can revoke by flipping one bit on the published status list.
+      </p>
+      <div id="wallet-list" aria-live="polite"></div>
     </div>
   </section>
 
   <!-- VERIFIER -->
-  <section class="view" id="view-verify">
-    <div class="grid cols-2">
+  <section class="tabpanel" role="tabpanel" id="panel-verify" data-view="verify" aria-labelledby="tab-verify" tabindex="0" hidden>
+    <div class="grid grid--2">
       <div class="panel">
-        <h2>Verify a Credential</h2>
-        <p class="sub">Paste a signed credential (or click “Present” on a wallet card). Verification is fully
-          independent: it checks the cryptographic signature, the blockchain anchor, and the revocation status.</p>
-        <label>Signed credential (JSON)</label>
-        <textarea id="v-input" placeholder="Paste a Verifiable Credential JSON here…"></textarea>
-        <button class="act" id="btn-verify">Verify Credential</button>
-        <button class="act ghost" id="btn-tamper" style="margin-top:10px">🧪 Tamper test — flip one character and re-verify</button>
-        <div class="result" id="v-result"></div>
+        <h2 class="panel__title">Verify a credential</h2>
+        <p class="panel__sub">
+          Paste any signed credential, or press <em>Present to verifier</em> on a wallet card.
+          Verification is fully independent of the issuer.
+        </p>
+        <div class="field">
+          <label for="v-input">Signed credential (JSON)</label>
+          <textarea id="v-input" placeholder="Paste a Verifiable Credential JSON document here…" spellcheck="false"></textarea>
+        </div>
+        <div class="actions">
+          <button type="button" class="exec-btn exec-btn--primary" id="btn-verify">Verify credential</button>
+          <button type="button" class="exec-btn" id="btn-tamper">Tamper test — forge the title and re-verify</button>
+        </div>
+        <div class="result" id="v-result" role="status" hidden></div>
       </div>
+
       <div class="panel">
-        <h2>What gets checked</h2>
-        <p class="sub">A credential is only trustworthy if <em>all</em> of these hold.</p>
-        <div class="check ok"><span class="icon">◆</span><div><b>Signature integrity</b> — the issuer's public key verifies the exact bytes that were signed. Any edit breaks it.</div></div>
-        <div class="check ok"><span class="icon">◆</span><div><b>Issuer authenticity</b> — the signing key resolves from the credential's issuer DID.</div></div>
-        <div class="check ok"><span class="icon">◆</span><div><b>Anchor / tamper-evidence</b> — the credential's hash exists on the append-only ledger and the chain is intact.</div></div>
-        <div class="check ok"><span class="icon">◆</span><div><b>Revocation status</b> — the issuer has not revoked the credential (status-list model).</div></div>
+        <h2 class="panel__title">What gets checked</h2>
+        <p class="panel__sub">A credential is trustworthy only if <em>every</em> one of these holds.</p>
+        <ul class="checks">
+          <li class="check check--ok">
+            <span class="check__icon" aria-hidden="true">◆</span>
+            <span><strong>Structure</strong><span class="check__detail">A well-formed VC 2.0 envelope carrying an Open Badges 3.0 achievement, with a proof attached.</span></span>
+          </li>
+          <li class="check check--ok">
+            <span class="check__icon" aria-hidden="true">◆</span>
+            <span><strong>Cryptographic signature</strong><span class="check__detail">The key resolved from the issuer DID verifies the exact canonicalized bytes. Any edit breaks it.</span></span>
+          </li>
+          <li class="check check--ok">
+            <span class="check__icon" aria-hidden="true">◆</span>
+            <span><strong>Issuer identity</strong><span class="check__detail">The DID decodes to a P-256 public key on its own — no registry, no central authority.</span></span>
+          </li>
+          <li class="check check--ok">
+            <span class="check__icon" aria-hidden="true">◆</span>
+            <span><strong>Tamper-evident anchor</strong><span class="check__detail">The credential's hash is on the append-only ledger and the whole chain re-verifies.</span></span>
+          </li>
+          <li class="check check--ok">
+            <span class="check__icon" aria-hidden="true">◆</span>
+            <span><strong>Revocation status</strong><span class="check__detail">The bit at the credential's index is clear on the issuer's published bitstring.</span></span>
+          </li>
+          <li class="check check--ok">
+            <span class="check__icon" aria-hidden="true">◆</span>
+            <span><strong>Validity period</strong><span class="check__detail">Now falls inside the window the credential asserts.</span></span>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
 
   <!-- LEDGER -->
-  <section class="view" id="view-ledger">
+  <section class="tabpanel" role="tabpanel" id="panel-ledger" data-view="ledger" aria-labelledby="tab-ledger" tabindex="0" hidden>
     <div class="panel">
-      <h2>Blockchain Anchor Ledger</h2>
-      <p class="sub">Each issued credential's SHA-256 hash is anchored to an append-only, hash-linked ledger.
-        Publishing only the <em>hash</em> keeps private data off-chain (privacy) while making tampering evident:
-        change any credential and its hash no longer matches its block, and every later block breaks too.</p>
-      <div class="kpis" style="justify-content:flex-start;margin-bottom:16px">
-        <div class="kpi"><div class="n" id="l-blocks">1</div><div class="l">Blocks</div></div>
-        <div class="kpi"><div class="n" id="l-integrity" style="color:var(--ok)">✓ Intact</div><div class="l">Chain integrity</div></div>
-        <button class="act ghost" id="btn-checkchain" style="margin-top:0;width:auto;align-self:center">Re-verify chain</button>
+      <h2 class="panel__title">Anchor ledger</h2>
+      <p class="panel__sub">
+        Each issued credential's SHA-256 hash is anchored to an append-only, hash-linked ledger.
+        Publishing only the <em>hash</em> keeps learner data off the ledger while making tampering
+        evident: change any credential and its hash no longer matches its block, and every later
+        block breaks too.
+      </p>
+      <div class="actions actions--spaced">
+        <button type="button" class="exec-btn exec-btn--primary" id="btn-checkchain">Re-verify chain</button>
       </div>
+      <p id="chain-status" aria-live="polite"></p>
       <div id="ledger-list"></div>
     </div>
   </section>
 
-  <footer class="site">
-    <p><strong style="color:var(--gold-soft)">VeriCred</strong> — an open-standards academic credentialing prototype.
-       Cryptography runs locally via the Web Crypto API; sample data is illustrative.</p>
-    <p style="margin-top:8px">Built by <a href="https://github.com/Freddricklogan">Freddrick Logan</a> ·
-       <a href="https://github.com/Freddricklogan/verifiable-academic-credentials">Source</a> ·
-       <a href="https://www.linkedin.com/in/freddricklogan/">LinkedIn</a></p>
-  </footer>
-</div>
-<div class="flash" id="flash"></div>
+</main>
 
-<script>
-/* ============================================================================
-   VeriCred — Verifiable Academic Credentials
-   Real cryptography (ECDSA P-256 via Web Crypto) + an append-only hash-linked
-   anchor ledger. Everything runs client-side; nothing leaves the browser.
-============================================================================ */
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-const enc = new TextEncoder();
-const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf)))
-                    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-const sha256hex = async (str) => {
-  const d = await crypto.subtle.digest('SHA-256', enc.encode(str));
-  return [...new Uint8Array(d)].map(b=>b.toString(16).padStart(2,'0')).join('');
-};
-// Deterministic canonical JSON (sorted keys) so signing/verifying agree byte-for-byte.
-const canon = (obj) => {
-  const sort = v => Array.isArray(v) ? v.map(sort)
-    : v && typeof v==='object' ? Object.keys(v).sort().reduce((o,k)=>(o[k]=sort(v[k]),o),{})
-    : v;
-  return JSON.stringify(sort(obj));
-};
-
-let issuerKeys=null, issuerJwk=null, issuerDid='';
-const wallet=[];               // held credentials
-const revoked=new Set();       // revoked credential ids (status list)
-let ledger=[];                 // hash-linked anchor blocks
-let issuedCount=0;
-
-function flash(msg){const f=document.getElementById('flash');f.textContent=msg;f.classList.add('show');
-  clearTimeout(f._t);f._t=setTimeout(()=>f.classList.remove('show'),2200);}
-
-async function initIssuer(){
-  issuerKeys = await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
-  issuerJwk = await crypto.subtle.exportKey('jwk', issuerKeys.publicKey);
-  const raw = await crypto.subtle.exportKey('raw', issuerKeys.publicKey);
-  issuerDid = 'did:key:z' + b64u(raw).slice(0,44);
-  document.getElementById('issuer-did').textContent = issuerDid;
-  document.getElementById('issuer-jwk').textContent =
-    JSON.stringify({kty:issuerJwk.kty,crv:issuerJwk.crv,x:issuerJwk.x,y:issuerJwk.y},null,2);
-  // Genesis block for the anchor ledger
-  ledger=[{index:0,ts:new Date().toISOString(),credentialId:'GENESIS',credentialHash:'0'.repeat(64),
-           prevHash:'0'.repeat(64)}];
-  ledger[0].blockHash = await blockHash(ledger[0]);
-  renderLedger();
-}
-
-async function blockHash(b){
-  return sha256hex(`${b.index}|${b.ts}|${b.credentialId}|${b.credentialHash}|${b.prevHash}`);
-}
-
-async function buildCredential(){
-  const issuer=val('i-issuer'), learner=val('i-learner'), title=val('i-title'),
-        type=val('i-type'), skills=val('i-skills').split(',').map(s=>s.trim()).filter(Boolean);
-  const id='urn:uuid:'+crypto.randomUUID();
-  const learnerDid='did:key:z'+b64u(enc.encode(learner+id)).slice(0,44);
-  const now=new Date().toISOString();
-  // W3C Verifiable Credential wrapping an Open Badges 3.0 AchievementCredential
-  const vc={
-    "@context":[
-      "https://www.w3.org/ns/credentials/v2",
-      "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
-    ],
-    id, type:["VerifiableCredential","OpenBadgeCredential"],
-    name:title, issuer:{id:issuerDid, type:["Profile"], name:issuer},
-    validFrom:now,
-    credentialSubject:{
-      id:learnerDid, type:["AchievementSubject"],
-      identifier:[{type:"IdentityObject", identityType:"name", hashed:false, identityHash:learner}],
-      achievement:{
-        id:'urn:uuid:'+crypto.randomUUID(), type:["Achievement"],
-        achievementType:type, name:title,
-        description:`${type} conferred to ${learner} by ${issuer}.`,
-        criteria:{narrative:`Successful completion of all requirements for ${title}.`},
-        competency:skills.map(s=>({type:["Competency"], name:s}))
-      }
-    },
-    credentialStatus:{id:id+"#status", type:"StatusList2021Entry", statusPurpose:"revocation"}
-  };
-  return {vc, learner, issuer};
-}
-
-async function signCredential(vc){
-  const bytes = enc.encode(canon(vc));
-  const sig = await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'}, issuerKeys.privateKey, bytes);
-  return {...vc, proof:{
-    type:"DataIntegrityProof", cryptosuite:"ecdsa-2019", created:new Date().toISOString(),
-    verificationMethod:issuerDid+"#keys-1", proofPurpose:"assertionMethod", proofValue:b64u(sig)
-  }};
-}
-
-async function anchor(signedVc){
-  const h = await sha256hex(canon(signedVc));
-  const prev = ledger[ledger.length-1];
-  const block={index:ledger.length, ts:new Date().toISOString(),
-    credentialId:signedVc.id, credentialHash:h, prevHash:prev.blockHash};
-  block.blockHash = await blockHash(block);
-  ledger.push(block);
-  return block;
-}
-
-async function issue(){
-  if(!issuerKeys){flash('Key still generating…');return;}
-  const {vc,learner,issuer}=await buildCredential();
-  const signed=await signCredential(vc);
-  await anchor(signed);
-  issuedCount++;
-  wallet.push({id:signed.id, title:signed.name, learner, issuer, type:vc.credentialSubject.achievement.achievementType,
-    skills:vc.credentialSubject.achievement.competency.map(c=>c.name), signed});
-  document.getElementById('k-issued').textContent=issuedCount;
-  document.getElementById('k-anchored').textContent=ledger.length-1;
-  renderWallet(); renderLedger();
-  flash('✓ Credential signed, issued & anchored');
-  switchView('wallet');
-}
-
-/* ---------- Verification ---------- */
-async function verify(signedVc){
-  const checks=[];
-  let sigOk=false;
-  try{
-    const {proof,...vc}=signedVc;
-    const pub=issuerKeys.publicKey; // in production: resolved from issuer DID
-    const sig=Uint8Array.from(atob(proof.proofValue.replace(/-/g,'+').replace(/_/g,'/')), c=>c.charCodeAt(0));
-    sigOk=await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'}, pub, sig, enc.encode(canon(vc)));
-  }catch(e){sigOk=false;}
-  checks.push({ok:sigOk, label:'Cryptographic signature', detail: sigOk
-     ? 'The issuer key verifies the exact signed bytes.' : 'Signature does NOT match — the credential was altered or the key is wrong.'});
-
-  const issuerOk = !!signedVc.issuer && signedVc.issuer.id===issuerDid;
-  checks.push({ok:issuerOk, label:'Issuer DID resolves', detail: issuerOk
-     ? `Signed by ${signedVc.issuer.name} (${issuerDid.slice(0,24)}…).` : 'Issuer DID does not match the resolving key.'});
-
-  const h=await sha256hex(canon(signedVc));
-  const anchored = ledger.some(b=>b.credentialHash===h);
-  const chainOk = await chainIntact();
-  checks.push({ok:anchored&&chainOk, label:'Blockchain anchor', detail: anchored&&chainOk
-     ? 'Hash found on the intact anchor ledger — tamper-evident.'
-     : (!anchored?'This exact credential hash is not anchored (never issued, or modified).':'Ledger chain is broken.')});
-
-  const notRevoked = !revoked.has(signedVc.id);
-  checks.push({ok:notRevoked, label:'Revocation status', detail: notRevoked
-     ? 'Active — not present on the issuer revocation list.' : 'REVOKED by the issuer.'});
-
-  return {pass:checks.every(c=>c.ok), checks};
-}
-
-async function chainIntact(){
-  for(let i=0;i<ledger.length;i++){
-    if(i>0 && ledger[i].prevHash!==ledger[i-1].blockHash) return false;
-    if(await blockHash(ledger[i])!==ledger[i].blockHash) return false;
-  }
-  return true;
-}
-
-/* ---------- Rendering ---------- */
-const val=id=>document.getElementById(id).value;
-function renderWallet(){
-  const el=document.getElementById('wallet-list');
-  if(!wallet.length){el.innerHTML='<p style="color:var(--muted)">No credentials yet — issue one from the Issuer tab.</p>';return;}
-  el.innerHTML=wallet.map((c,i)=>`
-    <div class="cred-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-        <div><h3>${esc(c.title)}</h3>
-          <div class="meta">${esc(c.type)} · issued to <b>${esc(c.learner)}</b> by ${esc(c.issuer)}</div></div>
-        <span class="status ${revoked.has(c.id)?'revoked':'valid'}">${revoked.has(c.id)?'● Revoked':'● Valid'}</span>
-      </div>
-      <div>${c.skills.map(s=>`<span class="badge">${esc(s)}</span>`).join('')}</div>
-      <div class="card-actions">
-        <button onclick="present(${i})">Present → Verifier</button>
-        <button onclick="showJson(${i})">View signed JSON</button>
-        <button onclick="copyCred(${i})">Copy</button>
-        <button onclick="toggleRevoke('${c.id}')">${revoked.has(c.id)?'Un-revoke':'Revoke'}</button>
-      </div>
-      <pre class="json" id="json-${i}" style="display:none"></pre>
-    </div>`).join('');
-}
-function renderLedger(){
-  document.getElementById('l-blocks').textContent=ledger.length;
-  const el=document.getElementById('ledger-list');
-  el.innerHTML=ledger.map(b=>`
-    <div class="ledger-block">
-      <div class="box">
-        <b>Block #${b.index}</b> ${b.index===0?'· genesis':''}<br>
-        <span class="hashline">${new Date(b.ts).toLocaleString()}</span><br>
-        credential: <span class="hashline">${b.credentialId.slice(0,28)}${b.credentialId.length>28?'…':''}</span><br>
-        cred hash: <span class="hashline">${b.credentialHash.slice(0,32)}…</span><br>
-        prev: <span class="hashline">${b.prevHash.slice(0,20)}…</span> ·
-        block: <span class="hashline" style="color:var(--gold-soft)">${b.blockHash.slice(0,20)}…</span>
-      </div>
-    </div>`).join('');
-}
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-
-window.present=i=>{document.getElementById('v-input').value=JSON.stringify(wallet[i].signed,null,2);
-  switchView('verify');document.getElementById('v-result').classList.remove('show');flash('Loaded into verifier');};
-window.showJson=i=>{const p=document.getElementById('json-'+i);
-  p.style.display=p.style.display==='none'?'block':'none';
-  p.textContent=JSON.stringify(wallet[i].signed,null,2);};
-window.copyCred=i=>{navigator.clipboard.writeText(JSON.stringify(wallet[i].signed,null,2));flash('Credential copied');};
-window.toggleRevoke=id=>{revoked.has(id)?revoked.delete(id):revoked.add(id);renderWallet();flash('Revocation status updated');};
-
-/* ---------- Wiring ---------- */
-function switchView(v){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
-  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('active',s.id==='view-'+v));
-}
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>switchView(t.dataset.view));
-document.getElementById('btn-issue').onclick=issue;
-
-document.getElementById('btn-verify').onclick=async()=>{
-  const box=document.getElementById('v-result');
-  let vc; try{vc=JSON.parse(document.getElementById('v-input').value);}catch(e){
-    box.className='result show fail';box.innerHTML='<b>Invalid JSON.</b> Paste a signed credential.';return;}
-  const {pass,checks}=await verify(vc);
-  box.className='result show '+(pass?'pass':'fail');
-  box.innerHTML=`<div style="font-size:1.05em;font-weight:800;margin-bottom:10px">
-      ${pass?'✓ CREDENTIAL VERIFIED':'✗ VERIFICATION FAILED'}</div>`+
-    checks.map(c=>`<div class="check ${c.ok?'ok':'no'}"><span class="icon">${c.ok?'✓':'✗'}</span>
-      <div><b>${c.label}</b> — ${c.detail}</div></div>`).join('');
-};
-
-document.getElementById('btn-tamper').onclick=async()=>{
-  if(!wallet.length){flash('Issue a credential first');return;}
-  const clone=JSON.parse(JSON.stringify(wallet[0].signed));
-  clone.name='Ph.D. in Rocket Science';                 // forge a "better" credential
-  clone.credentialSubject.achievement.name='Ph.D. in Rocket Science';
-  document.getElementById('v-input').value=JSON.stringify(clone,null,2);
-  switchView('verify');
-  document.getElementById('btn-verify').click();
-  flash('Forged the title — watch the signature check fail');
-};
-
-document.getElementById('btn-checkchain').onclick=async()=>{
-  const ok=await chainIntact();
-  const el=document.getElementById('l-integrity');
-  el.textContent=ok?'✓ Intact':'✗ Broken';el.style.color=ok?'var(--ok)':'var(--bad)';
-  flash(ok?'Ledger chain verified intact':'Ledger chain is broken');
-};
-
-initIssuer();
-</script>
+<script type="module" src="src/main.js"></script>
 </body>
 </html>
