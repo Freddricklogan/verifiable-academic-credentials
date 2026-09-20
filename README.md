@@ -35,6 +35,8 @@ verifier recovers the issuer's public key from the credential's own
 never heard of, with no registry lookup and no network access at all. A reviewer
 can watch a forged credential fail in real time.
 
+**[→ Read the full case study](docs/CASE_STUDY.md)**
+
 | Outcome | How this repo delivers it |
 | --- | --- |
 | Verification in milliseconds, not days | The verifier decodes the issuer's key from the credential itself; six checks run locally with zero network calls |
