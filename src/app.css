@@ -1,8 +1,8 @@
 /* VeriCred — demo-specific styles. Tokens come from exec-shell.css. */
 
 .notice {
-  background: rgba(88, 166, 255, 0.08);
-  border: 1px solid rgba(88, 166, 255, 0.35);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
   border-radius: var(--radius-sm);
   padding: 12px 16px;
   font-size: 0.82rem;
@@ -179,7 +179,7 @@
   border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
   padding: 9px 11px;
-  color: #9ecbff;
+  color: var(--accent-2);
 }
 
 pre.json {
@@ -268,15 +268,15 @@ pre.json[hidden] {
 }
 
 .status-pill--valid {
-  color: #7ee787;
-  background: rgba(63, 185, 80, 0.14);
-  border: 1px solid rgba(63, 185, 80, 0.5);
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ok) 50%, transparent);
 }
 
 .status-pill--revoked {
-  color: #ffb4ae;
-  background: rgba(248, 81, 73, 0.14);
-  border: 1px solid rgba(248, 81, 73, 0.5);
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--danger) 50%, transparent);
 }
 
 .cred__actions {
@@ -308,13 +308,13 @@ pre.json[hidden] {
 }
 
 .result--pass {
-  border-color: rgba(63, 185, 80, 0.55);
-  background: rgba(63, 185, 80, 0.07);
+  border-color: color-mix(in srgb, var(--ok) 55%, transparent);
+  background: color-mix(in srgb, var(--ok) 7%, transparent);
 }
 
 .result--fail {
-  border-color: rgba(248, 81, 73, 0.55);
-  background: rgba(248, 81, 73, 0.07);
+  border-color: color-mix(in srgb, var(--danger) 55%, transparent);
+  background: color-mix(in srgb, var(--danger) 7%, transparent);
 }
 
 .result__verdict {
@@ -325,11 +325,11 @@ pre.json[hidden] {
 }
 
 .result--pass .result__verdict {
-  color: #7ee787;
+  color: var(--ok);
 }
 
 .result--fail .result__verdict {
-  color: #ffb4ae;
+  color: var(--danger);
 }
 
 .checks {
