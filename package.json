@@ -2,13 +2,13 @@
   "name": "verifiable-academic-credentials",
   "version": "1.0.0",
   "private": true,
-  "description": "VeriCred — a reference implementation of W3C Verifiable Credentials 2.0 and Open Badges 3.0 with real ECDSA P-256 signatures, resolvable did:key identifiers, bitstring status-list revocation and a hash-linked anchor ledger, running entirely in the browser.",
+  "description": "VeriCred \u2014 a reference implementation of W3C Verifiable Credentials 2.0 and Open Badges 3.0 with real ECDSA P-256 signatures, resolvable did:key identifiers, bitstring status-list revocation and a hash-linked anchor ledger, running entirely in the browser.",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "lint": "eslint .",
+    "lint": "eslint . && node src/contrast-check.mjs src/exec-shell.css",
     "validate": "html-validate index.html",
     "serve": "npx serve ."
   },
