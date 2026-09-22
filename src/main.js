@@ -266,6 +266,7 @@ async function recheckChain() {
 /* -------------------------------------------------------------------------- */
 
 const shell = mountExecShell({
+  theme: 'ember',
   title: 'VeriCred — Verifiable Academic Credentials',
   tagline:
     'A browser-based reference implementation of W3C Verifiable Credentials 2.0 and ' +
