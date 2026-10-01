@@ -1,0 +1,3 @@
+# Reviewed false positive (30 Sep 2026): the did:key identifier in this test is the published
+# W3C did:key Ed25519 example vector, a public key identifier, not a credential.
+b9fc80b9725bebcb94a4c1f69405b7f0c611b341:tests/did.test.js:generic-api-key:118

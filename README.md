@@ -44,7 +44,7 @@ can watch a forged credential fail in real time.
 | Tampering is detectable, not merely discouraged | One changed character breaks both the ECDSA signature and the anchored SHA-256 hash; the tour forges a credential live and shows both fail |
 | Revocation without surveillance | A bitstring status list: every verifier downloads the same artifact, so the issuer learns nothing about who is checking which credential |
 | Learner data stays off the ledger | Only the credential's hash is anchored, never its contents |
-| Claims that survive review | 133 unit tests at 99.27% statement coverage, exercising real Web Crypto rather than mocks |
+| Claims that survive review | 141 unit tests at 99.27% statement coverage, exercising real Web Crypto rather than mocks |
 
 ## 2. Demonstrated Competencies & Technical Skills
 
@@ -238,7 +238,7 @@ npm run validate     # html-validate on index.html
 
 | Check | Result |
 | --- | --- |
-| `npm test` | **133 tests passing**, 8 files, ~2.8 s |
+| `npm test` | **141 tests passing**, 8 files, ~2.8 s |
 | `npm run coverage` | **99.27% statements**, 98.12% branches, 100% functions across all eight `src/` logic modules |
 | `npm run lint` | clean, 0 errors, 0 warnings |
 | `npm run validate` | clean |

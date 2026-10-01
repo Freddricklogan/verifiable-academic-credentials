@@ -32,7 +32,7 @@ Worth knowing: two documented deviations from strict conformance — the status 
 
 ## 6. Evidence
 
-Measured in continuous integration on the current main branch: 133 unit tests passing across eight files, 99.28% statement coverage, lint and HTML validation clean, CodeQL and dependency scanning enabled. The tests exercise real Web Crypto, not mocks, and include one that verifies a credential from a freshly generated issuer the verifier has never seen. Headless-browser smoke test: zero console errors, the guided tour forges a credential live and both the signature check and the anchor check fail. Security posture: Content Security Policy with `default-src 'none'`, no inline handlers, no third-party script.
+Measured in continuous integration on the current main branch: 141 unit tests passing across eight files, 99.28% statement coverage, lint and HTML validation clean, CodeQL and dependency scanning enabled. The tests exercise real Web Crypto, not mocks, and include one that verifies a credential from a freshly generated issuer the verifier has never seen. Headless-browser smoke test: zero console errors, the guided tour forges a credential live and both the signature check and the anchor check fail. Security posture: Content Security Policy with `default-src 'none'`, no inline handlers, no third-party script.
 
 ## 7. What it would take to run this in production
 
